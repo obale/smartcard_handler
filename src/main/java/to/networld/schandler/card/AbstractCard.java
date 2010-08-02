@@ -39,6 +39,9 @@ public abstract class AbstractCard {
 	private CardTerminal terminal;
 	private String protocol;
 	
+	public static final String PROTOCOL_T0 = "T=0";
+	public static final String PROTOCOL_T1 = "T=1";
+	
 	/**
 	 * A abstract card object that provides the functions and values that are the same for
 	 * all cards.
@@ -112,6 +115,17 @@ public abstract class AbstractCard {
 		this.card.beginExclusive();
 		CardChannel channel = this.card.getBasicChannel();
 		ResponseAPDU response = channel.transmit(com);
+		this.card.endExclusive();
+		
+		return response;
+	}
+	
+	public synchronized ResponseAPDU sendAPDUCommandToCard(CommandAPDU _command) throws CardException {
+		assert (this.card != null);
+		
+		this.card.beginExclusive();
+		CardChannel channel = this.card.getBasicChannel();
+		ResponseAPDU response = channel.transmit(_command);
 		this.card.endExclusive();
 		
 		return response;

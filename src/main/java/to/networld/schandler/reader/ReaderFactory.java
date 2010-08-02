@@ -45,10 +45,10 @@ public abstract class ReaderFactory {
 	 * @return A {@link CardTerminal} element that encapsulates the reader otherwise null.
 	 * @throws CardException {@link CardException}
 	 */
-	public static CardTerminal getReaderObject(int _readerNr) throws CardException {
+	public synchronized static CardTerminal getReaderObject(int _readerNr) throws CardException {
 		TerminalFactory factory = TerminalFactory.getDefault();
 		List<CardTerminal> readerList = factory.terminals().list();
-		if  ( readerList.size() >= _readerNr )
+		if  ( readerList.size() > _readerNr )
 			return readerList.get(_readerNr);
 		else
 			return null;

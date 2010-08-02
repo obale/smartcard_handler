@@ -23,25 +23,20 @@ package to.networld.schandler;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.ResponseAPDU;
 
+import to.networld.schandler.card.AbstractCard;
 import to.networld.schandler.card.Mifare1K;
+import to.networld.schandler.card.OpenPGP;
 import to.networld.schandler.common.HexHandler;
 import to.networld.schandler.reader.ReaderFactory;
 
 /**
  * @author Alex Oberhauser
- *
  */
 public class Main {
 
-	/**
-	 * The main class that is used to test the library during the development phase.
-	 * 
-	 * @param args Not used!
-	 * @throws Exception 
-	 */
-	public static void main(String[] args) throws Exception {
+	public static void testMifare1KCard() throws Exception {
 		CardTerminal terminal = ReaderFactory.getReaderObject(ReaderFactory.OMNIKEY_5x21_RFID);
-		Mifare1K card = new Mifare1K(terminal, Mifare1K.PROTOCOL_T1);
+		Mifare1K card = new Mifare1K(terminal, AbstractCard.PROTOCOL_T1);
 		
 		while ( !card.connectToCard() ) {
 			Thread.sleep(500);
@@ -58,6 +53,36 @@ public class Main {
 		System.out.println("\tStatus Message: " + Mifare1K.getResponseMessage(readData.getBytes()));
 		System.out.println("\tStatus Code   : " + HexHandler.getHexString(readData.getBytes()));
 		System.out.println("\tData          : " + HexHandler.getHexString(readData.getData()));
+	}
+	
+	public static void testOpenPGPCard() throws Exception {
+		CardTerminal terminal = ReaderFactory.getReaderObject(ReaderFactory.OMNIKEY_5x21_SMARTCARD);
+		OpenPGP card = new OpenPGP(terminal, AbstractCard.PROTOCOL_T1);
+		
+		while ( !card.connectToCard() ) {
+			Thread.sleep(500);
+		}
+		ResponseAPDU dataAPDU = card.selectFile();
+		System.out.println(OpenPGP.getResponseMessage(dataAPDU.getBytes()));
+		
+		System.out.println("AID      : " + card.getAID());
+		System.out.println("URL      : " + card.getURL());
+		System.out.println("LoginName: " + card.getLoginData());
+		System.out.println("Gender   : " + card.getGender());
+		System.out.println("Language : " + card.getLanguage());
+		System.out.println("User Data: " + card.getUserData());
+		System.out.println("Variable Data: " + HexHandler.getHexToAscii(card.getData((byte)0x00, (byte)0xC4)));
+	}
+	
+	/**
+	 * The main class that is used to test the library during the development phase.
+	 * 
+	 * @param args Not used!
+	 * @throws Exception 
+	 */
+	public static void main(String[] args) throws Exception {
+//		Main.testMifare1KCard();
+		Main.testOpenPGPCard();
 	}
 
 }

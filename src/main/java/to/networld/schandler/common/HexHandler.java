@@ -21,12 +21,23 @@
 package to.networld.schandler.common;
 
 import java.math.BigInteger;
+import java.util.Vector;
 
 /**
  * @author Alex Oberhauser
  *
  */
 public abstract class HexHandler {
+	
+	/**
+	 * Converts the byte in the hexadecimal representation encoded as String.
+	 * 
+	 * @param _b The byte that should be converted.
+	 * @return The String representation of this byte (in hexadecimal).
+	 */
+	public static String getByteToString(byte _b) {
+		return Integer.toString( ( _b & 0xff ) + 0x100, 16).substring(1);
+	}
 	
 	/**
 	 * Converts a byte array in a String.
@@ -37,8 +48,34 @@ public abstract class HexHandler {
 	 */
 	public static String getHexString(byte[] _byteArray) throws Exception {
 		String result = new String();
-		for (int i=0; i < _byteArray.length; i++) {
-			result += Integer.toString( ( _byteArray[i] & 0xff ) + 0x100, 16).substring(1);
+		for ( int i=0; i < _byteArray.length; i++ ) {
+			result += getByteToString(_byteArray[i]);
+		}
+		return result;
+	}
+	
+	public static String getHexToAscii(byte[] _byteArray) {
+		String result = new String();
+		for ( int i=0; i < _byteArray.length; i++ ) {
+			String hexValue = getByteToString(_byteArray[i]);
+			int value = Integer.parseInt(hexValue, 16);
+			if ( value < 32 || value > 126) result += " "; 
+			else result += (char)value;
+		}
+		return result;
+	}
+	
+	/**
+	 * Converts a byte array (hex) to a Vector of Integer (dec).
+	 * 
+	 * @param _byteArray A Array of Bytes.
+	 * @return A Vector of Integer, same length as the input array.
+	 */
+	public static Vector<Integer> getHexToInt(byte[] _byteArray) {
+		Vector<Integer> result = new Vector<Integer>(_byteArray.length);
+		for ( int i=0; i < _byteArray.length; i++ ) {
+			String hexValue = getByteToString(_byteArray[i]);
+			result.add(Integer.parseInt(hexValue, 16));
 		}
 		return result;
 	}

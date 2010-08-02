@@ -47,10 +47,6 @@ import to.networld.schandler.common.HexHandler;
  *
  */
 public class Mifare1K extends AbstractCard {
-	
-	public static final String PROTOCOL_T0 = "T=0";
-	public static final String PROTOCOL_T1 = "T=1";
-	
 	public static final byte KEY_A = (byte)0x60;
 	public static final byte KEY_B = (byte)0x61;
 
@@ -74,7 +70,6 @@ public class Mifare1K extends AbstractCard {
 	
 	/**
 	 * The following part is the standard key for Mifare Classic 1K cards.
-	 * XXX: Wrong key! The right key for Mifare 1K cards is: FF FF FF FF FF FF
 	 */
 	public static final byte[] STD_KEY = new byte[]{ (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF, (byte)0xFF };
 	
@@ -99,21 +94,21 @@ public class Mifare1K extends AbstractCard {
 		if ( _error[0] ==  SUCCESS[0] && _error[1] == SUCCESS[1] )
 			return "Success";
 		else if ( _error[0] ==  CARD_EXECUTION_ERROR[0] && _error[1] == CARD_EXECUTION_ERROR[1] )
-			return "Card Execution Error";
+			return "Card execution error";
 		else if ( _error[0] ==  WRONG_LENGTH[0] && _error[1] == WRONG_LENGTH[1] )
-			return "Wrong Length";
+			return "Wrong length";
 		else if ( _error[0] ==  INVALID_CLASS_BYTE[0] && _error[1] == INVALID_CLASS_BYTE[1] )
-			return "Invalid Class (CLA) Byte";
+			return "Invalid class (CLA) byte";
 		else if ( _error[0] == SECURITY_ERROR[0] && _error[1] == SECURITY_ERROR[1] )
-			return "Security Status not satisfied. This can include wrong data structure, wrong keys, incorrect padding.";
+			return "Security status not satisfied. This can include wrong data structure, wrong keys, incorrect padding.";
 		else if ( _error[0] ==  INVALID_INSTRUCTION[0] && _error[1] == INVALID_INSTRUCTION[1] )
 			return "Invalid Instruction (INS) Byte";
 		else if ( _error[0] ==  WRONG_PARAMETER[0] && _error[1] == WRONG_PARAMETER[1] )
-			return "Wrong Parameter P1 or P2";
+			return "Wrong parameter P1 or P2";
 		else if ( _error[0] ==  WRONG_KEY_LENGTH[0] && _error[1] == WRONG_KEY_LENGTH[1] )
-			return "Wrong Key Length";
+			return "Wrong key length";
 		else if ( _error[0] ==  MEMORY_FAILURE[0] && _error[1] == MEMORY_FAILURE[1] )
-			return "Memory Failure, addressed by P1-P2 is does not exist";
+			return "Memory failure, addressed by P1-P2 is does not exist";
 		return "Unknown Response Message";
 	}
 
