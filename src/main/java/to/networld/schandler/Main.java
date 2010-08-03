@@ -33,26 +33,42 @@ import to.networld.schandler.reader.ReaderFactory;
  * @author Alex Oberhauser
  */
 public class Main {
+	static Mifare1K card = null;
+	
+	public static void writeMifare1KCard(String _data) throws Exception {
+		card.formatCard(Mifare1K.KEY_A, Mifare1K.STD_KEY, (byte)0x01);
+		card.writeData(Mifare1K.KEY_A,
+				Mifare1K.STD_KEY,
+				(byte)0x01,
+				_data.getBytes());
+	}
+	
+	public static void readMifare1KCardString() throws Exception {
+		String data = card.readData(Mifare1K.KEY_A, Mifare1K.STD_KEY, (byte)0x01);
+		System.out.println("\t[DATA] " + data);
+	}
+	
+	public static void readMifare1KCardBytes() throws Exception {
+		for (int count=0; count < 64; count++) {
+			ResponseAPDU readData = card.readBlockData(Mifare1K.KEY_A,
+					Mifare1K.STD_KEY,
+					(byte)0x00,
+					HexHandler.getByte(count),
+					(byte)0x01);
+			System.out.println("\t[" + HexHandler.getByteToString(HexHandler.getByte(count)) + "] " + HexHandler.getHexString(readData.getData()));
+		}
+	}
 
-	public static void testMifare1KCard() throws Exception {
+	public static void initMifare1KCard() throws Exception {
 		CardTerminal terminal = ReaderFactory.getReaderObject(ReaderFactory.OMNIKEY_5x21_RFID);
-		Mifare1K card = new Mifare1K(terminal, AbstractCard.PROTOCOL_T1);
+		card = new Mifare1K(terminal, AbstractCard.PROTOCOL_T1);
 		
 		while ( !card.connectToCard() ) {
 			Thread.sleep(500);
 		}
+
 		String currentKey = card.getUID();
-		System.out.println("Card UID    : " + currentKey);
-		
-		ResponseAPDU readData = card.readData(Mifare1K.KEY_A,
-				Mifare1K.STD_KEY,
-				(byte)0x00,
-				(byte)0x00,
-				(byte)0x1B);
-		System.out.println("Data Block:");
-		System.out.println("\tStatus Message: " + Mifare1K.getResponseMessage(readData.getBytes()));
-		System.out.println("\tStatus Code   : " + HexHandler.getHexString(readData.getBytes()));
-		System.out.println("\tData          : " + HexHandler.getHexString(readData.getData()));
+		System.out.println("\t[UID]  " + currentKey);
 	}
 	
 	public static void testOpenPGPCard() throws Exception {
@@ -72,6 +88,7 @@ public class Main {
 		System.out.println("Language : " + card.getLanguage());
 		System.out.println("User Data: " + card.getUserData());
 		System.out.println("Variable Data: " + HexHandler.getHexToAscii(card.getData((byte)0x00, (byte)0xC4)));
+		card.disconnect(true);
 	}
 	
 	/**
@@ -81,8 +98,15 @@ public class Main {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-//		Main.testMifare1KCard();
-		Main.testOpenPGPCard();
-	}
+		System.out.println("[*] Waiting for a RFID card    ...");
+		Main.initMifare1KCard();
+		System.out.println("[*] Reading out stored data    ...");
+		Main.readMifare1KCardString();
+		System.out.println("[*] Raw data                   ...");
+		Main.readMifare1KCardBytes();
+		Main.card.disconnect(false);
+		
+//		Main.testOpenPGPCard();
+	} 
 
 }

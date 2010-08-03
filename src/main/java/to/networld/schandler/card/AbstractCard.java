@@ -111,23 +111,31 @@ public abstract class AbstractCard {
 	public synchronized ResponseAPDU sendAPDUCommandToCard(byte[] _command) throws CardException {
 		assert (this.card != null);
 		CommandAPDU com = new CommandAPDU(_command);
-		
-		this.card.beginExclusive();
-		CardChannel channel = this.card.getBasicChannel();
-		ResponseAPDU response = channel.transmit(com);
-		this.card.endExclusive();
-		
-		return response;
+
+		try {
+			this.card.beginExclusive();
+			CardChannel channel = this.card.getBasicChannel();
+			ResponseAPDU response = channel.transmit(com);
+			return response;
+		} finally {
+			this.card.endExclusive();
+		}
 	}
 	
 	public synchronized ResponseAPDU sendAPDUCommandToCard(CommandAPDU _command) throws CardException {
 		assert (this.card != null);
 		
-		this.card.beginExclusive();
-		CardChannel channel = this.card.getBasicChannel();
-		ResponseAPDU response = channel.transmit(_command);
-		this.card.endExclusive();
-		
-		return response;
+		try {
+			this.card.beginExclusive();
+			CardChannel channel = this.card.getBasicChannel();
+			ResponseAPDU response = channel.transmit(_command);
+			return response;
+		} finally {
+			this.card.endExclusive();
+		}
+	}
+	
+	public synchronized void  disconnect(boolean _reset) throws CardException {
+		this.card.disconnect(_reset);
 	}
 }

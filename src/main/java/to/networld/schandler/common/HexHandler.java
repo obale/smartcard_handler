@@ -50,19 +50,42 @@ public abstract class HexHandler {
 		String result = new String();
 		for ( int i=0; i < _byteArray.length; i++ ) {
 			result += getByteToString(_byteArray[i]);
+			result += " ";
 		}
 		return result;
 	}
 	
+	/**
+	 * @param _byteArray A input array of bytes
+	 * @return The representation of the byte array in ascii code.
+	 */
 	public static String getHexToAscii(byte[] _byteArray) {
 		String result = new String();
 		for ( int i=0; i < _byteArray.length; i++ ) {
 			String hexValue = getByteToString(_byteArray[i]);
 			int value = Integer.parseInt(hexValue, 16);
-			if ( value < 32 || value > 126) result += " "; 
+			if ( value < 7 || value > 126) result += " "; 
 			else result += (char)value;
 		}
 		return result;
+	}
+	
+	/**
+	 * string.getBytes() has the same effect. That means this method is
+	 * marked as deprecated.
+	 * 
+	 * @param _inputData A String that should be converted.
+	 * @return
+	 * @throws Exception
+	 */
+	@Deprecated
+	public static byte[] getStringToHexArray(String _inputData) throws Exception {
+		int dataLength = _inputData.length();
+		byte[] retArray = new byte[dataLength];
+		for ( int i=0; i < dataLength; i++ ) {
+			retArray[i] = getByte(_inputData.charAt(i));
+		}
+		return retArray;
 	}
 	
 	/**
@@ -88,5 +111,32 @@ public abstract class HexHandler {
 			return retValues[1];
 		else 
 			return retValues[0];
+	}
+	
+	/**
+	 * @return A byte array with 16 0x00 values.
+	 */
+	public static byte[] initEmptyArray() {
+		return new byte[] { (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, 
+				(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+				(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+				(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00 };
+	}
+	
+	public static Vector<byte[]> splitArray(byte[] _inputArray) {
+		Vector<byte[]> retVector = new Vector<byte[]>();
+		byte[] tmpArray = initEmptyArray();
+		int count = 0;
+		for ( int i=0; i < _inputArray.length; i++ ) {
+			if ( i % 16 == 0 && i != 0 ) {
+				retVector.add(tmpArray);
+				tmpArray = initEmptyArray();
+				count = 0;
+			}
+			tmpArray[count] = _inputArray[i];
+			count++;
+		}
+		retVector.add(tmpArray);
+		return retVector;
 	}
 }

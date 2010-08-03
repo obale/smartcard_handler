@@ -20,11 +20,14 @@
 
 package to.networld.schandler.card;
 
+import java.util.Vector;
+
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.ResponseAPDU;
 
 import to.networld.schandler.common.HexHandler;
+import to.networld.schandler.common.WrongDataBlockLengthException;
 
 /**
  * PC/SC 2.0 - Mifare
@@ -66,6 +69,27 @@ public class Mifare1K extends AbstractCard {
 	 * END Response Message Codes
 	 */
 	
+	/*
+	 * Data blocks that are writable.
+	 */
+	public static final byte[] USER_DATA_FIELDS = new byte[] { 
+		            (byte)0x01, (byte)0x02, 
+		(byte)0x04, (byte)0x05, (byte)0x06,
+		(byte)0x08, (byte)0x09, (byte)0x0A,
+		(byte)0x0C, (byte)0x0D, (byte)0x0E,
+		(byte)0x10, (byte)0x11, (byte)0x12,
+		(byte)0x14, (byte)0x15, (byte)0x16,
+		(byte)0x18, (byte)0x19, (byte)0x2a,
+		(byte)0x1c, (byte)0x1d, (byte)0x1e,
+		(byte)0x20, (byte)0x21, (byte)0x22,
+		(byte)0x24, (byte)0x25, (byte)0x26,
+		(byte)0x28, (byte)0x29, (byte)0x2a,
+		(byte)0x2c, (byte)0x2d, (byte)0x2e,
+		(byte)0x30, (byte)0x31, (byte)0x32,
+		(byte)0x34, (byte)0x35, (byte)0x36,
+		(byte)0x38, (byte)0x39, (byte)0x3a,
+		(byte)0x3c, (byte)0x3d, (byte)0x3e };
+	
 	public static final byte[] GET_UID = new byte[] { (byte)0xFF, (byte)0xCA, (byte)0x00, (byte)0x00, (byte)0x00 };
 	
 	/**
@@ -87,31 +111,37 @@ public class Mifare1K extends AbstractCard {
 	/**
 	 * Returns a human readable return message.
 	 * 
-	 * @param _error The error code in the form of an byte array.
+	 * @param _responseArray The error code in the form of an byte array.
 	 * @return The response message in human readable form.
+	 * @throws Exception 
 	 */
-	public static String getResponseMessage(byte[] _error) {
-		if ( _error[0] ==  SUCCESS[0] && _error[1] == SUCCESS[1] )
+	public static String getResponseMessage(byte[] _responseArray) throws Exception {
+		if ( _responseArray.length > 2 ) return HexHandler.getHexString(_responseArray);
+		if ( _responseArray[0] ==  SUCCESS[0] && _responseArray[1] == SUCCESS[1] )
 			return "Success";
-		else if ( _error[0] ==  CARD_EXECUTION_ERROR[0] && _error[1] == CARD_EXECUTION_ERROR[1] )
+		else if ( _responseArray[0] ==  CARD_EXECUTION_ERROR[0] && _responseArray[1] == CARD_EXECUTION_ERROR[1] )
 			return "Card execution error";
-		else if ( _error[0] ==  WRONG_LENGTH[0] && _error[1] == WRONG_LENGTH[1] )
+		else if ( _responseArray[0] ==  WRONG_LENGTH[0] && _responseArray[1] == WRONG_LENGTH[1] )
 			return "Wrong length";
-		else if ( _error[0] ==  INVALID_CLASS_BYTE[0] && _error[1] == INVALID_CLASS_BYTE[1] )
+		else if ( _responseArray[0] ==  INVALID_CLASS_BYTE[0] && _responseArray[1] == INVALID_CLASS_BYTE[1] )
 			return "Invalid class (CLA) byte";
-		else if ( _error[0] == SECURITY_ERROR[0] && _error[1] == SECURITY_ERROR[1] )
+		else if ( _responseArray[0] == SECURITY_ERROR[0] && _responseArray[1] == SECURITY_ERROR[1] )
 			return "Security status not satisfied. This can include wrong data structure, wrong keys, incorrect padding.";
-		else if ( _error[0] ==  INVALID_INSTRUCTION[0] && _error[1] == INVALID_INSTRUCTION[1] )
+		else if ( _responseArray[0] ==  INVALID_INSTRUCTION[0] && _responseArray[1] == INVALID_INSTRUCTION[1] )
 			return "Invalid Instruction (INS) Byte";
-		else if ( _error[0] ==  WRONG_PARAMETER[0] && _error[1] == WRONG_PARAMETER[1] )
+		else if ( _responseArray[0] ==  WRONG_PARAMETER[0] && _responseArray[1] == WRONG_PARAMETER[1] )
 			return "Wrong parameter P1 or P2";
-		else if ( _error[0] ==  WRONG_KEY_LENGTH[0] && _error[1] == WRONG_KEY_LENGTH[1] )
+		else if ( _responseArray[0] ==  WRONG_KEY_LENGTH[0] && _responseArray[1] == WRONG_KEY_LENGTH[1] )
 			return "Wrong key length";
-		else if ( _error[0] ==  MEMORY_FAILURE[0] && _error[1] == MEMORY_FAILURE[1] )
+		else if ( _responseArray[0] ==  MEMORY_FAILURE[0] && _responseArray[1] == MEMORY_FAILURE[1] )
 			return "Memory failure, addressed by P1-P2 is does not exist";
 		return "Unknown Response Message";
 	}
 
+	/**
+	 * @return The UID of the RFID card.
+	 * @throws Exception
+	 */
 	public synchronized String getUID() throws Exception {
 		ResponseAPDU res = this.sendAPDUCommandToCard(GET_UID);
 		String rawUID = HexHandler.getHexString(res.getBytes());
@@ -135,9 +165,9 @@ public class Mifare1K extends AbstractCard {
 	 * </ul>
 	 * 
 	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
-	 * @param _key The key as byte array
+	 * @param _key The key as byte array.
 	 * @param _msb The beginning of the area that is accessed.
-	 * @param _lsb The end of the area that is accessed.
+	 * @param _lsb The end of the area that is accessed. From 0x00 (dec: 0) to 0x3F (dec: 63)
 	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
 	 * @return A ResponseAPDU from the load key or authenticate phase. 
 	 * @throws Exception 
@@ -175,8 +205,8 @@ public class Mifare1K extends AbstractCard {
 			authCommand[3] = (byte)0x00;   // P2
 			authCommand[4] = (byte)0x05;   // Le
 			authCommand[5] = (byte)0x01;   // Version
-			authCommand[6] = _msb; // Address MSB (most significant bit)
-			authCommand[7] = _lsb;   // Address LSB (least significant bit)
+			authCommand[6] = _msb;         // Address MSB (most significant bit)
+			authCommand[7] = _lsb;         // Address LSB (least significant bit)
 			authCommand[8] = _keyType;
 			authCommand[9] = _keyNumber;
 			ResponseAPDU authResponse = this.sendAPDUCommandToCard(authCommand);
@@ -201,14 +231,14 @@ public class Mifare1K extends AbstractCard {
 	 * </ul>
 	 * 
 	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
-	 * @param _key The key as byte array
+	 * @param _key The key as byte array.
 	 * @param _msb The beginning of the area that is accessed.
-	 * @param _lsb The end of the area that is accessed.
+	 * @param _lsb The end of the area that is accessed. From 0x00 (dec: 0) to 0x3F (dec: 63) 
 	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
 	 * @return If no error had occurred the data from the card.
 	 * @throws Exception 
 	 */
-	public synchronized ResponseAPDU readData(byte _keyType,
+	public synchronized ResponseAPDU readBlockData(byte _keyType,
 			byte[] _key, 
 			byte _msb, 
 			byte _lsb, 
@@ -226,5 +256,122 @@ public class Mifare1K extends AbstractCard {
 			return readResponse;
 		}
 		return sectorLoginResponse;
+	}
+	
+	
+	/**
+	 * Beginning from the 0x01 block until a 0x00 Byte is reached.
+	 * Returns the found data as String.
+	 * 
+	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
+	 * @param _key The key as byte array.
+	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
+	 * @return The found data as String.
+	 * @throws Exception 
+	 */
+	public synchronized String readData(byte _keyType,
+			byte[] _key,
+			byte _keyNumber) throws Exception {
+		String retString = new String();
+		for ( int count = 0; count < USER_DATA_FIELDS.length; count++ ) {
+			ResponseAPDU response = this.readBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber);
+			byte[] retData = response.getData();
+			if ( retData[0] == (byte)0x00 ) break;
+			retString += HexHandler.getHexToAscii(retData);
+		}
+		return retString;
+	}
+
+	/**
+	 * 1. Load the key into the memory.<br/>
+	 * 2. Authenticate with the previously loaded key.<br/>
+	 * 3. Write Data to the block.<p/>
+	 * 
+	 * The following example should work with a new Mifare 1K card:<p/>
+	 * 
+	 * <ul>
+	 * 		<li> _keyType = 0x60</li>
+	 * 		<li> _key = 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF</li>
+	 *		<li> _accessStart = 0x00</li>
+	 *		<li> _accessEnd = 0x00</li>
+	 *		<li> _keyNumber = 0x01</li>
+	 * </ul>
+	 * 
+	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
+	 * @param _key The key as byte array.
+	 * @param _msb The beginning of the area that is accessed.
+	 * @param _lsb The end of the area that is accessed. From 0x00 (dec: 0) to 0x39 (dec: 63) 
+	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
+	 * @return If no error had occurred the data from the card.
+	 * @throws Exception 
+	 */
+	public synchronized ResponseAPDU writeBlockData(byte _keyType,
+			byte[] _key,
+			byte _msb,
+			byte _lsb,
+			byte _keyNumber,
+			byte[] _data) throws Exception {
+		if ( _data.length != 16 ) throw new WrongDataBlockLengthException("Expected '16' byte entries but found '" + _data.length + "'");
+		ResponseAPDU sectorLoginResponse = this.sectorLogin(_keyType, _key, _msb, _lsb, _keyNumber);
+		byte[] sectorLoginStatus = sectorLoginResponse.getBytes();
+		if ( sectorLoginStatus[0] == SUCCESS[0] && sectorLoginStatus[1] == SUCCESS[1] ) {
+			int dataLength = _data.length;
+			byte[] writeCommand = new byte[5 + dataLength];
+			writeCommand[0] = (byte)0xFF; // CLA
+			writeCommand[1] = (byte)0xD6; // INS
+			writeCommand[2] = _msb;	      // P1 == Address MSB (most significant bit)
+			writeCommand[3] = _lsb;       // P2 == Address LSB (least significant bit)
+			writeCommand[4] = HexHandler.getByte(dataLength); // Le
+			int endLoopValue = 5 + dataLength;
+			for ( int count=5, nr=0; count <  endLoopValue; count++, nr++ ) {
+				writeCommand[count] = _data[nr];
+			}
+			ResponseAPDU writeResponse = this.sendAPDUCommandToCard(writeCommand);
+			return writeResponse;
+		}
+		return sectorLoginResponse;
+	}
+	
+	/**
+	 * 1. Load the key into the memory.<br/>
+	 * 2. Authenticate with the previously loaded key.<br/>
+	 * 3. Write Data to the blocks.<p/>
+	 * 
+	 * The following example should work with a new Mifare 1K card:<p/>
+	 * 
+	 * <ul>
+	 * 		<li> _keyType = 0x60</li>
+	 * 		<li> _key = 0xFF 0xFF 0xFF 0xFF 0xFF 0xFF</li>
+	 *		<li> _accessStart = 0x00</li>
+	 *		<li> _accessEnd = 0x00</li>
+	 *		<li> _keyNumber = 0x01</li>
+	 * </ul>
+	 * 
+	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
+	 * @param _key The key as byte array
+	 * @param _msb The beginning of the area that is accessed.
+	 * @param _lsb The end of the area that is accessed. From 0x00 (dec: 0) to 0x39 (dec: 63) 
+	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
+	 * @return If no error had occurred the data from the card.
+	 * @throws Exception 
+	 */
+	public synchronized void writeData(byte _keyType,
+			byte[] _key,
+			byte _keyNumber,
+			byte[] _data) throws Exception {
+		Vector<byte[]> blocks = HexHandler.splitArray(_data);
+		for ( int count = 0; count < USER_DATA_FIELDS.length; count++ ) {
+			if ( blocks.isEmpty() ) break;
+			this.writeBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber, blocks.firstElement());
+			blocks.remove(0);
+		}
+	}
+	
+	public synchronized void formatCard(byte _keyType,
+			byte[] _key,
+			byte _keyNumber) throws Exception {
+		for ( int count = 0; count < USER_DATA_FIELDS.length; count++ ) {
+			this.writeBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber, HexHandler.initEmptyArray());
+		}
 	}
 }
