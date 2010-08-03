@@ -30,6 +30,8 @@ import to.networld.schandler.common.HexHandler;
 import to.networld.schandler.reader.ReaderFactory;
 
 /**
+ * Example implementation of the methods to show how they could be used.
+ * 
  * @author Alex Oberhauser
  */
 public class Main {
@@ -100,6 +102,9 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		System.out.println("[*] Waiting for a RFID card    ...");
 		Main.initMifare1KCard();
+		String data = "http://koni.networld.to/foaf.rdf#me";
+		System.out.println("[*] Writing data to the card: " + data);
+		Main.writeMifare1KCard(data);
 		System.out.println("[*] Reading out stored data    ...");
 		Main.readMifare1KCardString();
 		System.out.println("[*] Raw data                   ...");

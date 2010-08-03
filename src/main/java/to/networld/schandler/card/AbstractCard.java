@@ -122,6 +122,13 @@ public abstract class AbstractCard {
 		}
 	}
 	
+	/**
+	 * Sends a APDU command to the card. Used to interact with a connected card.
+	 * 
+	 * @param _command The command encapsulated in {@link CommandAPDU}
+	 * @return A {@link ResponseAPDU} that encapsulates the response.
+	 * @throws CardException
+	 */
 	public synchronized ResponseAPDU sendAPDUCommandToCard(CommandAPDU _command) throws CardException {
 		assert (this.card != null);
 		
@@ -135,6 +142,11 @@ public abstract class AbstractCard {
 		}
 	}
 	
+	/**
+	 * Disconnect from 
+	 * @param _reset
+	 * @throws CardException
+	 */
 	public synchronized void  disconnect(boolean _reset) throws CardException {
 		this.card.disconnect(_reset);
 	}

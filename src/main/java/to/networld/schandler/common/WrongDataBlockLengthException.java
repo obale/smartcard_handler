@@ -21,6 +21,9 @@
 package to.networld.schandler.common;
 
 /**
+ * Exception that indicates that the block size is wrong. This exception could
+ * occur if the caller tries to write to match or to few data to a block.
+ * 
  * @author Alex Oberhauser
  *
  */

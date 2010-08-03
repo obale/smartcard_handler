@@ -34,7 +34,9 @@ import javax.smartcardio.TerminalFactory;
  */
 public abstract class ReaderFactory {
 	
+	/** Omnikey 5x21 smart card reader slot. */
 	public static int OMNIKEY_5x21_SMARTCARD = 0x00;
+	/** Omnikey 5x21 RFID reader slot. */
 	public static int OMNIKEY_5x21_RFID = 0x01;
 	
 	/**

@@ -348,7 +348,7 @@ public class Mifare1K extends AbstractCard {
 	 * </ul>
 	 * 
 	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
-	 * @param _key The key as byte array
+	 * @param _key The key as byte array.
 	 * @param _msb The beginning of the area that is accessed.
 	 * @param _lsb The end of the area that is accessed. From 0x00 (dec: 0) to 0x39 (dec: 63) 
 	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
@@ -367,6 +367,14 @@ public class Mifare1K extends AbstractCard {
 		}
 	}
 	
+	/**
+	 * Overwrite all user writable blocks with 0x00 bytes. 
+	 * 
+	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
+	 * @param _key The key as byte array.
+	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
+	 * @throws Exception
+	 */
 	public synchronized void formatCard(byte _keyType,
 			byte[] _key,
 			byte _keyNumber) throws Exception {

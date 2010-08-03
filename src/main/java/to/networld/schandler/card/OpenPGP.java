@@ -128,6 +128,15 @@ public class OpenPGP extends AbstractCard {
 		return this.sendAPDUCommandToCard(OpenPGP.SELECT_FILE);
 	}
 	
+	/**
+	 * Method that will be used to read out the data. Could be called externally or
+	 * in the wrapper methods.
+	 * 
+	 * @param _p1 The first parameter P1
+	 * @param _p2 The second parameter P2
+	 * @return
+	 * @throws Exception
+	 */
 	public synchronized byte[] getData(byte _p1, byte _p2) throws Exception {
 		byte[] commandByteArray = new byte[] { (byte)0x00, (byte)0xCA, _p1, _p2, (byte)0xFF };
 		Vector<Integer> commandVector = HexHandler.getHexToInt(commandByteArray);
@@ -142,6 +151,8 @@ public class OpenPGP extends AbstractCard {
 	}
 	
 	/**
+	 * A unique identifier that is related to the card.
+	 * 
 	 * @return The Application Identifier.
 	 * @throws Exception 
 	 */
@@ -150,6 +161,8 @@ public class OpenPGP extends AbstractCard {
 	}
 	
 	/**
+	 * Returns the login name. Could be a for example user name or email.
+	 * 
 	 * @return The login name of the card owner.
 	 * @throws Exception 
 	 */
