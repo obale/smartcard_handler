@@ -53,7 +53,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	public static final byte KEY_A = (byte)0x60;
 	public static final byte KEY_B = (byte)0x61;
 	
-	public final int MAX_BLOCKS = 0;
+	public int MAX_BLOCKS = 0;
 
 	/*
 	 * BEGIN Response Message Codes
@@ -71,7 +71,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * END Response Message Codes
 	 */
 	
-	private final byte[] USER_DATA_FIELDS = new byte[] {};
+	public byte[] USER_DATA_FIELDS = new byte[] { };
 	
 	public static final byte[] GET_UID = new byte[] { (byte)0xFF, (byte)0xCA, (byte)0x00, (byte)0x00, (byte)0x00 };
 	
@@ -256,7 +256,7 @@ public abstract class AbstractMifare extends AbstractCard {
 			byte[] _key,
 			byte _keyNumber) throws Exception {
 		String retString = new String();
-		for ( int count = 0; count < USER_DATA_FIELDS.length; count++ ) {
+		for ( int count = 0; count < this.USER_DATA_FIELDS.length; count++ ) {
 			ResponseAPDU response = this.readBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber);
 			byte[] retData = response.getData();
 			if ( retData[0] == (byte)0x00 ) break;
@@ -343,9 +343,9 @@ public abstract class AbstractMifare extends AbstractCard {
 			byte _keyNumber,
 			byte[] _data) throws Exception {
 		Vector<byte[]> blocks = HexHandler.splitArray(_data);
-		for ( int count = 0; count < USER_DATA_FIELDS.length; count++ ) {
+		for ( int count = 0; count < this.USER_DATA_FIELDS.length; count++ ) {
 			if ( blocks.isEmpty() ) break;
-			this.writeBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber, blocks.firstElement());
+			this.writeBlockData(_keyType, _key, (byte)0x00, this.USER_DATA_FIELDS[count], _keyNumber, blocks.firstElement());
 			blocks.remove(0);
 		}
 	}
@@ -361,7 +361,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	public synchronized void formatCard(byte _keyType,
 			byte[] _key,
 			byte _keyNumber) throws Exception {
-		for ( int count = 0; count < USER_DATA_FIELDS.length; count++ ) {
+		for ( int count = 0; count < this.USER_DATA_FIELDS.length; count++ ) {
 			this.writeBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber, HexHandler.initEmptyArray());
 		}
 	}
