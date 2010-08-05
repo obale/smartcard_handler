@@ -52,7 +52,7 @@ public abstract class HexHandler {
 			result += getByteToString(_byteArray[i]);
 			result += " ";
 		}
-		return result;
+		return result.trim();
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public abstract class HexHandler {
 			if ( value < 7 || value > 126) result += " "; 
 			else result += (char)value;
 		}
-		return result;
+		return result.trim();
 	}
 	
 	/**

@@ -24,7 +24,10 @@ import javax.smartcardio.CardTerminal;
 import javax.smartcardio.ResponseAPDU;
 
 import to.networld.schandler.card.AbstractCard;
+import to.networld.schandler.card.IClass;
+import to.networld.schandler.card.AbstractMifare;
 import to.networld.schandler.card.Mifare1K;
+//import to.networld.schandler.card.Mifare4K;
 import to.networld.schandler.card.OpenPGP;
 import to.networld.schandler.common.HexHandler;
 import to.networld.schandler.reader.ReaderFactory;
@@ -36,24 +39,29 @@ import to.networld.schandler.reader.ReaderFactory;
  */
 public class Main {
 	static Mifare1K card = null;
+//	static Mifare4K card = null;
 	
-	public static void writeMifare1KCard(String _data) throws Exception {
-		card.formatCard(Mifare1K.KEY_A, Mifare1K.STD_KEY, (byte)0x01);
-		card.writeData(Mifare1K.KEY_A,
-				Mifare1K.STD_KEY,
+	public static void formatRFIDCard() throws Exception {
+		card.formatCard(AbstractMifare.KEY_A, AbstractMifare.STD_KEY, (byte)0x01);
+	}
+	
+	public static void writeAbstractCard(String _data) throws Exception {
+		card.formatCard(AbstractMifare.KEY_A, AbstractMifare.STD_KEY, (byte)0x01);
+		card.writeData(AbstractMifare.KEY_A,
+				AbstractMifare.STD_KEY,
 				(byte)0x01,
 				_data.getBytes());
 	}
 	
-	public static void readMifare1KCardString() throws Exception {
-		String data = card.readData(Mifare1K.KEY_A, Mifare1K.STD_KEY, (byte)0x01);
+	public static void readAbstractMifareCardString() throws Exception {
+		String data = card.readData(AbstractMifare.KEY_A, AbstractMifare.STD_KEY, (byte)0x01);
 		System.out.println("\t[DATA] " + data);
 	}
 	
-	public static void readMifare1KCardBytes() throws Exception {
-		for (int count=0; count < 64; count++) {
-			ResponseAPDU readData = card.readBlockData(Mifare1K.KEY_A,
-					Mifare1K.STD_KEY,
+	public static void readAbstractMifareCardBytes() throws Exception {
+		for (int count=0; count < card.MAX_BLOCKS; count++) {
+			ResponseAPDU readData = card.readBlockData(AbstractMifare.KEY_A,
+					AbstractMifare.STD_KEY,
 					(byte)0x00,
 					HexHandler.getByte(count),
 					(byte)0x01);
@@ -61,9 +69,10 @@ public class Main {
 		}
 	}
 
-	public static void initMifare1KCard() throws Exception {
+	public static void initAbstractMifareCard() throws Exception {
 		CardTerminal terminal = ReaderFactory.getReaderObject(ReaderFactory.OMNIKEY_5x21_RFID);
 		card = new Mifare1K(terminal, AbstractCard.PROTOCOL_T1);
+//		card = new Mifare4K(terminal, AbstractCard.PROTOCOL_T1);
 		
 		while ( !card.connectToCard() ) {
 			Thread.sleep(500);
@@ -94,24 +103,37 @@ public class Main {
 	}
 	
 	/**
+	 * @throws Exception 
+	 * 
+	 */
+	public static void testIClassCard() throws Exception {
+		CardTerminal terminal = ReaderFactory.getReaderObject(ReaderFactory.OMNIKEY_5x21_RFID);
+		IClass icard = new IClass(terminal, AbstractCard.PROTOCOL_T1);
+		
+		while ( !icard.connectToCard() ) {
+			Thread.sleep(500);
+		}
+
+		String currentKey = icard.getUID();
+		System.out.println("\t[UID]  " + currentKey);
+	} 
+	
+	/**
 	 * The main class that is used to test the library during the development phase.
 	 * 
 	 * @param args Not used!
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		System.out.println("[*] Waiting for a RFID card    ...");
-		Main.initMifare1KCard();
-		String data = "http://koni.networld.to/foaf.rdf#me";
-		System.out.println("[*] Writing data to the card: " + data);
-		Main.writeMifare1KCard(data);
-		System.out.println("[*] Reading out stored data    ...");
-		Main.readMifare1KCardString();
-		System.out.println("[*] Raw data                   ...");
-		Main.readMifare1KCardBytes();
-		Main.card.disconnect(false);
+//		System.out.println("[*] Waiting for a RFID card    ...");
+//		Main.initAbstractMifareCard();
+//		System.out.println("[*] Reading out stored data    ...");
+//		Main.readAbstractMifareCardString();
+//		System.out.println("[*] Raw data                   ...");
+//		Main.readAbstractMifareCardBytes();
+//		Main.card.disconnect(false);
 		
+		Main.testIClassCard();
 //		Main.testOpenPGPCard();
-	} 
-
+	}
 }

@@ -18,7 +18,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.schandler.common;
+package to.networld.schandler.common.exceptions;
 
 /**
  * Exception that indicates that the block size is wrong. This exception could
