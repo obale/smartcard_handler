@@ -125,15 +125,15 @@ public class Main {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-//		System.out.println("[*] Waiting for a RFID card    ...");
-//		Main.initAbstractMifareCard();
-//		System.out.println("[*] Reading out stored data    ...");
-//		Main.readAbstractMifareCardString();
-////		System.out.println("[*] Raw data                   ...");
-////		Main.readAbstractMifareCardBytes();
-//		Main.card.disconnect(false);
+		System.out.println("[*] Waiting for a RFID card    ...");
+		Main.initAbstractMifareCard();
+		System.out.println("[*] Reading out stored data    ...");
+		Main.readAbstractMifareCardString();
+//		System.out.println("[*] Raw data                   ...");
+//		Main.readAbstractMifareCardBytes();
+		Main.card.disconnect(false);
 		
-		Main.testIClassCard();
+//		Main.testIClassCard();
 //		Main.testOpenPGPCard();
 	}
 }
