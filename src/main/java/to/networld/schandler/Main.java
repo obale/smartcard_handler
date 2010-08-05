@@ -24,7 +24,7 @@ import javax.smartcardio.CardTerminal;
 import javax.smartcardio.ResponseAPDU;
 
 import to.networld.schandler.card.AbstractCard;
-import to.networld.schandler.card.IClass;
+import to.networld.schandler.card.ISO15693;
 import to.networld.schandler.card.AbstractMifare;
 import to.networld.schandler.card.Mifare1K;
 //import to.networld.schandler.card.Mifare4K;
@@ -108,7 +108,7 @@ public class Main {
 	 */
 	public static void testIClassCard() throws Exception {
 		CardTerminal terminal = ReaderFactory.getReaderObject(ReaderFactory.OMNIKEY_5x21_RFID);
-		IClass icard = new IClass(terminal, AbstractCard.PROTOCOL_T1);
+		ISO15693 icard = new ISO15693(terminal, AbstractCard.PROTOCOL_T1);
 		
 		while ( !icard.connectToCard() ) {
 			Thread.sleep(500);
@@ -125,15 +125,15 @@ public class Main {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		System.out.println("[*] Waiting for a RFID card    ...");
-		Main.initAbstractMifareCard();
-		System.out.println("[*] Reading out stored data    ...");
-		Main.readAbstractMifareCardString();
-		System.out.println("[*] Raw data                   ...");
-		Main.readAbstractMifareCardBytes();
-		Main.card.disconnect(false);
+//		System.out.println("[*] Waiting for a RFID card    ...");
+//		Main.initAbstractMifareCard();
+//		System.out.println("[*] Reading out stored data    ...");
+//		Main.readAbstractMifareCardString();
+////		System.out.println("[*] Raw data                   ...");
+////		Main.readAbstractMifareCardBytes();
+//		Main.card.disconnect(false);
 		
-//		Main.testIClassCard();
+		Main.testIClassCard();
 //		Main.testOpenPGPCard();
 	}
 }

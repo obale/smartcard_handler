@@ -73,7 +73,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	
 	public byte[] USER_DATA_FIELDS = new byte[] { };
 	
-	public static final byte[] GET_UID = new byte[] { (byte)0xFF, (byte)0xCA, (byte)0x00, (byte)0x00, (byte)0x00 };
+	public static final byte[] GET_UID = new byte[] { (byte)0xFF, (byte)0xCA, (byte)0x01, (byte)0x00, (byte)0x00 };
 	
 	/**
 	 * The following part is the standard key for Mifare Classic 1K cards.

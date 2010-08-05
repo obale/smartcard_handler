@@ -1,5 +1,5 @@
 /**
- * Semantic Crawler Library
+ * SmartCard Handler Library
  *
  * Copyright (C) 2010 by Networld Project
  * Written by Alex Oberhauser <oberhauseralex@networld.to>
