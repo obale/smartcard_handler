@@ -27,20 +27,22 @@ import javax.smartcardio.CardTerminal;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 
+import to.networld.schandler.common.HexHandler;
+import to.networld.schandler.interfaces.ICard;
+
 /**
- * Abstract class that encapsulates the functions and values that are
+ * Basic class that encapsulates the functions and values that are
  * the same for all cards.
  * 
  * @author Alex Oberhauser
  *
  */
-public abstract class AbstractCard {
+public class BasicCard implements ICard {
 	protected Card card;
 	private CardTerminal terminal;
 	private String protocol;
 	
-	public static final String PROTOCOL_T0 = "T=0";
-	public static final String PROTOCOL_T1 = "T=1";
+	public static final byte[] GET_UID = new byte[] { (byte)0xFF, (byte)0xCA, (byte)0x00, (byte)0x00, (byte)0x00 };
 	
 	/**
 	 * A abstract card object that provides the functions and values that are the same for
@@ -49,12 +51,13 @@ public abstract class AbstractCard {
 	 * @param _terminal A reader that is related to this card.
 	 * @param _protocol For example "T=0" or "T=1"
 	 */
-	public AbstractCard(CardTerminal _terminal, String _protocol) {
+	public BasicCard(CardTerminal _terminal, String _protocol) {
 		assert((_terminal != null) && (_protocol != null));
 		this.terminal = _terminal;
 		this.protocol = _protocol;
 	}
 	
+	@Override
 	public synchronized boolean connectToCard() throws CardException {
 		if ( this.terminal.isCardPresent() ) {
 			this.card = this.terminal.connect(this.protocol);
@@ -63,55 +66,60 @@ public abstract class AbstractCard {
 		return false;
 	}
 	
-	/**
-	 * Possible to change the related reader for this card.
-	 * null value is NOT permitted.
-	 * 
-	 * @param _terminal A object that encapsulates the reader.
-	 */
+	@Override
 	public synchronized void setTerminal(CardTerminal _terminal) {
 		assert(_terminal != null);
 		this.terminal = _terminal;
 	}
 	
-	/**
-	 * Possible to change the related protocol for this card.
-	 * null value is NOT permitted.
-	 * 
-	 * @param _protocol The protocol as String value.
-	 */
+	@Override
 	public synchronized void setProtocol(String _protocol) {
 		assert(_protocol != null);
 		this.protocol = _protocol;
 	}
 	
-	/**
-	 * @return The current related reader for this card.
-	 */
+	@Override
 	public synchronized CardTerminal getTerminal() { return this.terminal; }
 	
-	/**
-	 * @return The current related protocol for this card.
-	 */
+	@Override
 	public synchronized String getProtocol() { return this.protocol; }
 	
-	/**
-	 * @return The card that is related to this object.
-	 */
+	@Override
 	public synchronized Card getCard() { return this.card; }
 	
 	/**
-	 * Send a command to the card. For example to read out values or to write
-	 * data to the card.
+	 * Needed because the data will be send in reverse order.
 	 * 
-	 * @param _command The command encoded in bytes.
-	 * @return A {@link ResponseAPDU} that encapsulates the response.
-	 * @throws CardException
+	 * @param _inputArray A byte array to reverse.
+	 * @return The input array in reverse order.
 	 */
+	private byte[] reverseArray(byte[] _inputArray) {
+		int size = _inputArray.length;
+		byte[] returnArray = new byte[size];
+		for ( int i=size-1, j=0; i >= 0; i--, j++ ) {
+			returnArray[j] = _inputArray[i];
+		}
+		return returnArray;
+	}
+
+	@Override
+	public synchronized String getUID() throws Exception {
+		ResponseAPDU res = this.sendAPDUCommandToCard(GET_UID);
+		CardType type = this.getCardType();
+		if ( type == CardType.ICODE1
+				|| type == CardType.ICODEEPC 
+				|| type == CardType.ICODESLI
+				|| type == CardType.ICODEUID )
+			return HexHandler.getHexString(this.reverseArray(res.getData()));
+		else
+			return HexHandler.getHexString(res.getData());
+	}
+	
+	@Override
 	public synchronized ResponseAPDU sendAPDUCommandToCard(byte[] _command) throws CardException {
 		assert (this.card != null);
 		CommandAPDU com = new CommandAPDU(_command);
-
+		
 		try {
 			this.card.beginExclusive();
 			CardChannel channel = this.card.getBasicChannel();
@@ -121,14 +129,8 @@ public abstract class AbstractCard {
 			this.card.endExclusive();
 		}
 	}
-	
-	/**
-	 * Sends a APDU command to the card. Used to interact with a connected card.
-	 * 
-	 * @param _command The command encapsulated in {@link CommandAPDU}
-	 * @return A {@link ResponseAPDU} that encapsulates the response.
-	 * @throws CardException
-	 */
+
+	@Override
 	public synchronized ResponseAPDU sendAPDUCommandToCard(CommandAPDU _command) throws CardException {
 		assert (this.card != null);
 		
@@ -142,12 +144,25 @@ public abstract class AbstractCard {
 		}
 	}
 	
-	/**
-	 * Disconnect from 
-	 * @param _reset
-	 * @throws CardException
-	 */
+	@Override
 	public synchronized void  disconnect(boolean _reset) throws CardException {
 		this.card.disconnect(_reset);
+	}
+	
+	@Override
+	public synchronized CardType getCardType() {
+		if ( this.card == null) return null;
+		byte[] atr = this.card.getATR().getBytes();
+
+		byte[] cardtype = new byte[2];
+		cardtype[0] = atr[13];
+		cardtype[1] = atr[14];
+		
+		int typeNr = (int)cardtype[1];
+		CardType[] values = CardType.values();
+		if ( typeNr < values.length )
+			return values[typeNr];
+		else
+			return CardType.UNKNOWN;
 	}
 }

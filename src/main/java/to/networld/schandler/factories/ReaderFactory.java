@@ -18,7 +18,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.schandler.reader;
+package to.networld.schandler.factories;
 
 import java.util.List;
 

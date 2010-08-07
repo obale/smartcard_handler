@@ -49,11 +49,11 @@ import to.networld.schandler.common.exceptions.WrongDataBlockLengthException;
  * @author Alex Oberhauser
  *
  */
-public abstract class AbstractMifare extends AbstractCard {
+public class BasicMifare extends BasicCard {
 	public static final byte KEY_A = (byte)0x60;
 	public static final byte KEY_B = (byte)0x61;
 	
-	public int MAX_BLOCKS = 0;
+	public final int MAX_BLOCKS;
 
 	/*
 	 * BEGIN Response Message Codes
@@ -71,7 +71,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * END Response Message Codes
 	 */
 	
-	public byte[] USER_DATA_FIELDS = new byte[] { };
+	public final byte[] USER_DATA_FIELDS;
 	
 	public static final byte[] GET_UID = new byte[] { (byte)0xFF, (byte)0xCA, (byte)0x00, (byte)0x00, (byte)0x00 };
 	
@@ -87,8 +87,81 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * @param protocol
 	 * @throws CardException
 	 */
-	public AbstractMifare(CardTerminal terminal, String protocol) throws CardException {
+	public BasicMifare(CardTerminal terminal, String protocol) throws CardException {
 		super(terminal, protocol);
+		
+		if ( !this.connectToCard() )
+			throw new CardException("No card found!");
+		
+		if ( this.getCardType() == CardType.Mifare1K ) {
+			/*
+			 * Data blocks that are writable.
+			 */
+			this.USER_DATA_FIELDS = new byte[] { 
+				            (byte)0x01, (byte)0x02, 
+				(byte)0x04, (byte)0x05, (byte)0x06,
+				(byte)0x08, (byte)0x09, (byte)0x0A,
+				(byte)0x0C, (byte)0x0D, (byte)0x0E,
+				(byte)0x10, (byte)0x11, (byte)0x12,
+				(byte)0x14, (byte)0x15, (byte)0x16,
+				(byte)0x18, (byte)0x19, (byte)0x2a,
+				(byte)0x1c, (byte)0x1d, (byte)0x1e,
+				(byte)0x20, (byte)0x21, (byte)0x22,
+				(byte)0x24, (byte)0x25, (byte)0x26,
+				(byte)0x28, (byte)0x29, (byte)0x2a,
+				(byte)0x2c, (byte)0x2d, (byte)0x2e,
+				(byte)0x30, (byte)0x31, (byte)0x32,
+				(byte)0x34, (byte)0x35, (byte)0x36,
+				(byte)0x38, (byte)0x39, (byte)0x3a,
+				(byte)0x3c, (byte)0x3d, (byte)0x3e };
+			this.MAX_BLOCKS = 64;
+		} else if ( this.getCardType() == CardType.Mifare4K ) {
+			/*
+			 * Data blocks that are writable.
+			 */
+			this.USER_DATA_FIELDS = new byte[] {
+				            (byte)0x01, (byte)0x02,
+				(byte)0x04, (byte)0x05, (byte)0x06,
+				(byte)0x08, (byte)0x09, (byte)0x0A,
+				(byte)0x0C, (byte)0x0D, (byte)0x0E,
+				(byte)0x10, (byte)0x11, (byte)0x12,
+				(byte)0x14, (byte)0x15, (byte)0x16,
+				(byte)0x18, (byte)0x19, (byte)0x2a,
+				(byte)0x1c, (byte)0x1d, (byte)0x1e,
+				(byte)0x20, (byte)0x21, (byte)0x22,
+				(byte)0x24, (byte)0x25, (byte)0x26,
+				(byte)0x28, (byte)0x29, (byte)0x2a,
+				(byte)0x2c, (byte)0x2d, (byte)0x2e,
+				(byte)0x30, (byte)0x31, (byte)0x32,
+				(byte)0x34, (byte)0x35, (byte)0x36,
+				(byte)0x38, (byte)0x39, (byte)0x3a,
+				(byte)0x3c, (byte)0x3d, (byte)0x3e,
+
+				(byte)0x40, (byte)0x41, (byte)0x42,
+				(byte)0x44, (byte)0x45, (byte)0x46,
+				(byte)0x48, (byte)0x49, (byte)0x4a,
+				(byte)0x4c, (byte)0x4d, (byte)0x4e,
+				(byte)0x50, (byte)0x51, (byte)0x52,
+				(byte)0x54, (byte)0x55, (byte)0x56,
+				(byte)0x58, (byte)0x59, (byte)0x5a,
+				(byte)0x5c, (byte)0x5d, (byte)0x5e,
+				(byte)0x60, (byte)0x61, (byte)0x62,
+				(byte)0x64, (byte)0x65, (byte)0x66,
+				(byte)0x68, (byte)0x69, (byte)0x6a,
+				(byte)0x6c, (byte)0x6d, (byte)0x6e,
+				(byte)0x70, (byte)0x71, (byte)0x72,
+				(byte)0x74, (byte)0x75, (byte)0x76,
+				(byte)0x78, (byte)0x79, (byte)0x7a,
+				(byte)0x7c, (byte)0x7d, (byte)0x7e,
+
+				(byte)0x80, (byte)0x81, (byte)0x82, (byte)0x83, (byte)0x84, (byte)0x85, (byte)0x86, (byte)0x87, (byte)0x88, (byte)0x89, (byte)0x8a, (byte)0x8b, (byte)0x8c, (byte)0x8d, (byte)0x8e,
+				(byte)0x90, (byte)0x91, (byte)0x92, (byte)0x93, (byte)0x94, (byte)0x95, (byte)0x96, (byte)0x97, (byte)0x98, (byte)0x99, (byte)0x9a, (byte)0x9b, (byte)0x9c, (byte)0x9d, (byte)0x9e,
+				(byte)0xa0, (byte)0xa1, (byte)0xa2, (byte)0xa3, (byte)0xa4, (byte)0xa5, (byte)0xa6, (byte)0xa7, (byte)0xa8, (byte)0xa9, (byte)0xaa, (byte)0xab, (byte)0xac, (byte)0xad, (byte)0xae,
+			};
+			this.MAX_BLOCKS = 176;
+		} else {
+			throw new CardException("That seams not to be a 'Mifare 1K' or 'Mifare 4K' card.");
+		}
 	}
 	
 	/**
@@ -120,23 +193,13 @@ public abstract class AbstractMifare extends AbstractCard {
 			return "Memory failure, addressed by P1-P2 it does not exist";
 		return "Unknown Response Message";
 	}
-
-	/**
-	 * @return The UID of the RFID card.
-	 * @throws Exception
-	 */
-	public synchronized String getUID() throws Exception {
-		ResponseAPDU res = this.sendAPDUCommandToCard(GET_UID);
-		String rawUID = HexHandler.getHexString(res.getBytes());
-		return rawUID.substring(0, rawUID.length()-4);
-	}
 	
 	/**
 	 * 
 	 * 1. Load the key into the memory.<br/>
 	 * 2. Authenticate with the previously loaded key.<p/>
 	 * 
-	 * The following example reads from a Mikare 1K card with standard key
+	 * The following example reads from a Mikare 1K/4K card with standard key
 	 * the first line:<p/>
 	 * 
 	 * <ul>
@@ -203,7 +266,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * 2. Authenticate with the previously loaded key.<br/>
 	 * 3. Read data from the card
 	 * 
-	 * The following example should work with a new Mifare 1K card:<p/>
+	 * The following example should work with a new Mifare 1K/4K card:<p/>
 	 * 
 	 * <ul>
 	 * 		<li> _keyType = 0x60</li>
@@ -270,7 +333,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * 2. Authenticate with the previously loaded key.<br/>
 	 * 3. Write Data to the block.<p/>
 	 * 
-	 * The following example should work with a new Mifare 1K card:<p/>
+	 * The following example should work with a new Mifare 1K/4K card:<p/>
 	 * 
 	 * <ul>
 	 * 		<li> _keyType = 0x60</li>
@@ -320,7 +383,7 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * 2. Authenticate with the previously loaded key.<br/>
 	 * 3. Write Data to the blocks.<p/>
 	 * 
-	 * The following example should work with a new Mifare 1K card:<p/>
+	 * The following example should work with a new Mifare 1K/4K card:<p/>
 	 * 
 	 * <ul>
 	 * 		<li> _keyType = 0x60</li>
@@ -332,10 +395,8 @@ public abstract class AbstractMifare extends AbstractCard {
 	 * 
 	 * @param _keyType Could be 0x60 for KeyA or 0x61 for KeyB
 	 * @param _key The key as byte array.
-	 * @param _msb The beginning of the area that is accessed.
-	 * @param _lsb The end of the area that is accessed. From 0x00 (dec: 0) to 0x39 (dec: 63) 
 	 * @param _keyNumber 0x01, 0x1A, 0x1B should work as key number.
-	 * @return If no error had occurred the data from the card.
+	 * @param _data The data to write as byte array.
 	 * @throws Exception 
 	 */
 	public synchronized void writeData(byte _keyType,

@@ -24,8 +24,9 @@ import java.math.BigInteger;
 import java.util.Vector;
 
 /**
+ * Helper class for the handling of hex values and byte arrays.
+ * 
  * @author Alex Oberhauser
- *
  */
 public abstract class HexHandler {
 	
@@ -68,24 +69,6 @@ public abstract class HexHandler {
 			else result += (char)value;
 		}
 		return result.trim();
-	}
-	
-	/**
-	 * string.getBytes() has the same effect. That means this method is
-	 * marked as deprecated.
-	 * 
-	 * @param _inputData A String that should be converted.
-	 * @return
-	 * @throws Exception
-	 */
-	@Deprecated
-	public static byte[] getStringToHexArray(String _inputData) throws Exception {
-		int dataLength = _inputData.length();
-		byte[] retArray = new byte[dataLength];
-		for ( int i=0; i < dataLength; i++ ) {
-			retArray[i] = getByte(_inputData.charAt(i));
-		}
-		return retArray;
 	}
 	
 	/**

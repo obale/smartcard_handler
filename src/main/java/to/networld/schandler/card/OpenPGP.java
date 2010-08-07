@@ -35,7 +35,7 @@ import to.networld.schandler.common.HexHandler;
  * @author Alex Oberhauser
  *
  */
-public class OpenPGP extends AbstractCard {
+public class OpenPGP extends BasicCard {
 
 	/*
 	 * BEGIN Response Message Codes
@@ -134,7 +134,7 @@ public class OpenPGP extends AbstractCard {
 	 * 
 	 * @param _p1 The first parameter P1
 	 * @param _p2 The second parameter P2
-	 * @return
+	 * @return The data as byte array.
 	 * @throws Exception
 	 */
 	public synchronized byte[] getData(byte _p1, byte _p2) throws Exception {
