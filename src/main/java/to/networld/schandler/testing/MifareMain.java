@@ -9,10 +9,6 @@ import to.networld.schandler.common.HexHandler;
 import to.networld.schandler.factories.ReaderFactory;
 
 /**
- * A proof-of-concept implementation of the use of RFID chip in combination
- * with FOAF files and additional authentication mechanism (implemented from scratch
- * and not tested if really secure).
- * 
  * @author Alex Oberhauser
  */
 public class MifareMain {
@@ -49,16 +45,6 @@ public class MifareMain {
 			while ( System.in.read() != '\n'); 
 		}
 		card = new BasicMifare(_terminal, BasicMifare.PROTOCOL_T1);
-		
-		/*
-		 * [BEGIN] Critical Area
-		 */
-//		Main.writeMyFOAFFile();
-//		acs.changeKey(currentUID, card);
-//		acs.initNewCard(card);
-		/*
-		 * [END] Critical Area
-		 */
 		
 		String data = readMifare1KCardString();
 		String currentUID = card.getUID();
