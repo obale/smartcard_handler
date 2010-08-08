@@ -7,8 +7,21 @@
                 <eclipse.dependency>true</eclipse.dependency>
         </properties>
 
+        <distributionManagement>
+                <repository>
+                        <id>networld-ssh-repo</id>
+                        <name>Networld Repository</name>
+                        <url>scp://repo1.networld.to:64446/home/www/repo1</url>
+                </repository>
+                <snapshotRepository>
+                        <id>networld-ssh-repo</id>
+                        <name>Networld Repository</name>
+                        <url>scp://repo1.networld.to:64446/home/www/repo1</url>
+                </snapshotRepository>
+        </distributionManagement>
+
         <modelVersion>4.0.0</modelVersion>
-        <groupId>to.networld.schandler</groupId>
+        <groupId>to.networld.smartcard</groupId>
         <artifactId>schandler</artifactId>
         <version>0.1-SNAPSHOT</version>
         <packaging>jar</packaging>
@@ -30,8 +43,8 @@
 
         <scm>
                 <tag>HEAD</tag>
-                <connection>scm:git:git://networld.to/var/scm/ai/schandler.git</connection>
-                <developerConnection>scm:git:ssh://${env.USER}@networld.to:64446/var/scm/ai/schandler.git</developerConnection>
+                <connection>scm:git:git://networld.to/var/scm/libs/smartcard_handler.git</connection>
+                <developerConnection>scm:git:ssh://${env.USER}@networld.to:64446/var/scm/libs/smartcard_handler.git</developerConnection>
         </scm>
 
         <developers>

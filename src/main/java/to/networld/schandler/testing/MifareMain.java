@@ -12,7 +12,7 @@ import to.networld.schandler.factories.ReaderFactory;
  * @author Alex Oberhauser
  */
 public class MifareMain {
-	private static boolean DEBUG = true;
+	private static boolean DEBUG = false;
 	private static BasicMifare card = null;
 	
 	public static void writeMyFOAFFile() throws Exception {
