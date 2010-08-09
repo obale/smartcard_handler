@@ -27,6 +27,7 @@ import javax.smartcardio.CardTerminal;
 import javax.smartcardio.CommandAPDU;
 import javax.smartcardio.ResponseAPDU;
 
+import to.networld.schandler.common.HashValueHandler;
 import to.networld.schandler.common.HexHandler;
 import to.networld.schandler.interfaces.ICard;
 
@@ -113,6 +114,20 @@ public class BasicCard implements ICard {
 			return HexHandler.getHexString(this.reverseArray(res.getData()));
 		else
 			return HexHandler.getHexString(res.getData());
+	}
+	
+	@Override
+	public synchronized String getUIDHash(HASH_TYPE _hashType) throws Exception {
+		switch (_hashType) {
+			case SHA1:
+				return HashValueHandler.computeSHA1(this.getUID().replace(" ", ""));
+			case SHA256:
+				return HashValueHandler.computeSHA256(this.getUID().replace(" ", ""));
+			case SHA512:
+				return HashValueHandler.computeSHA512(this.getUID().replace(" ", ""));
+			default:
+				return null;
+		}
 	}
 	
 	@Override

@@ -19,6 +19,15 @@ public interface ICard {
 	public static final String PROTOCOL_T1 = "T=1";
 	
 	/**
+	 * Supported hash types.
+	 */
+	public enum HASH_TYPE {
+		SHA1,
+		SHA256,
+		SHA512
+	}
+	
+	/**
 	 * Enumeration that includes the different card types, sorted by ID.
 	 */
 	public enum CardType {
@@ -136,4 +145,13 @@ public interface ICard {
 	 * @throws Exception
 	 */
 	public String getUID() throws Exception;
+
+	/**
+	 * Returns the hash value of the UID.
+	 *  
+	 * @param hashType What hash value type should be computed.
+	 * @return The hash value of the UID.
+	 * @throws Exception 
+	 */
+	public String getUIDHash(HASH_TYPE hashType) throws Exception;
 }

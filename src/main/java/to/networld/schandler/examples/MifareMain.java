@@ -1,10 +1,11 @@
-package to.networld.schandler.testing;
+package to.networld.schandler.examples;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.ResponseAPDU;
 
 import to.networld.schandler.card.BasicMifare;
+import to.networld.schandler.interfaces.ICard.HASH_TYPE;
 import to.networld.schandler.common.HexHandler;
 import to.networld.schandler.factories.ReaderFactory;
 
@@ -49,6 +50,7 @@ public class MifareMain {
 		String data = readMifare1KCardString();
 		String currentUID = card.getUID();
 		System.out.println("[*] UID                " + currentUID);
+		System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA512));
 		System.out.println("[*] Card Type          " + card.getCardType());
 		System.out.println("[*] Data on the card   " + data);
 		if ( DEBUG ) {

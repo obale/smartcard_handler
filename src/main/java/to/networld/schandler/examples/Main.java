@@ -18,7 +18,7 @@
  * along with this software.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package to.networld.schandler.testing;
+package to.networld.schandler.examples;
 
 import javax.smartcardio.CardTerminal;
 import javax.smartcardio.ResponseAPDU;

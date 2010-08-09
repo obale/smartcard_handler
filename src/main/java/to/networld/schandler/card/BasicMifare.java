@@ -160,7 +160,8 @@ public class BasicMifare extends BasicCard {
 			};
 			this.MAX_BLOCKS = 176;
 		} else {
-			throw new CardException("That seams not to be a 'Mifare 1K' or 'Mifare 4K' card.");
+			throw new CardException("That seems not to be a 'Mifare 1K' or 'Mifare 4K' card. The detected card is of the type: '"
+						+ this.getCardType() + "'");
 		}
 	}
 	

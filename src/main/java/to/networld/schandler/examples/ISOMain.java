@@ -1,4 +1,4 @@
-package to.networld.schandler.testing;
+package to.networld.schandler.examples;
 
 import javax.smartcardio.CardException;
 import javax.smartcardio.CardTerminal;
