@@ -23,8 +23,8 @@ package to.networld.schandler.card;
 import javax.smartcardio.CardTerminal;
 
 /**
+ * 
  * @author Alex Oberhauser
- *
  */
 public class ISO15693 extends BasicCard {
 	

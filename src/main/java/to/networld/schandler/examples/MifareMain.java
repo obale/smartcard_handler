@@ -1,3 +1,23 @@
+/**
+ * SmartCard Handler Library
+ *
+ * Copyright (C) 2010 by Networld Project
+ * Written by Alex Oberhauser <oberhauseralex@networld.to>
+ * All Rights Reserved
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by 
+ * the Free Software Foundation, version 3 of the License.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>
+ */
+
 package to.networld.schandler.examples;
 
 import javax.smartcardio.CardException;
@@ -39,28 +59,34 @@ public class MifareMain {
 	
 	public static void readRFIDCard(CardTerminal _terminal) throws Exception {
 		System.out.println("[*] Waiting for card   ...");
-		
-		
+			
 		while ( !_terminal.isCardPresent() ) {
 			System.out.println("<<<< Please input a card and press then ENTER ... ");
 			while ( System.in.read() != '\n'); 
 		}
-		card = new BasicMifare(_terminal, BasicMifare.PROTOCOL_T1);
-		
-		String data = readMifare1KCardString();
-		String currentUID = card.getUID();
-		System.out.println("[*] UID                " + currentUID);
-		System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA512));
-		System.out.println("[*] Card Type          " + card.getCardType());
-		System.out.println("[*] Data on the card   " + data);
-		if ( DEBUG ) {
-			System.out.println("---- DEBUG Raw Data ----");
-			MifareMain.readMifare1KCardBytes();
-			System.out.println("------------------------");
-			System.out.println();
-		}
 
-		card.disconnect(true);
+		try {
+			card = new BasicMifare(_terminal, BasicMifare.PROTOCOL_T1);
+		
+			String data = readMifare1KCardString();
+			String currentUID = card.getUID();
+			System.out.println("[*] UID                " + currentUID);
+			System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA1));
+			System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA256));
+			System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA512));
+			System.out.println("[*] Card Type          " + card.getCardType());
+			System.out.println("[*] Data on the card   " + data);
+			if ( DEBUG ) {
+				System.out.println("---- DEBUG Raw Data ----");
+				MifareMain.readMifare1KCardBytes();
+				System.out.println("------------------------");
+				System.out.println();
+			}
+			card.disconnect(true);
+		} catch (CardException e) {
+			System.err.println(e.getLocalizedMessage());
+		}
+		
 	}
 	
 	public static void main(String[] args) throws Exception {

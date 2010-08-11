@@ -30,18 +30,16 @@ import javax.smartcardio.TerminalFactory;
  * Factory class that provides the reader objects.
  * 
  * @author Alex Oberhauser
- *
  */
 public abstract class ReaderFactory {
 	
-	/** Omnikey 5x21 smart card reader slot. */
+	/** Omnikey 5x21 smart card reader slot. Works only if no other reader is present. */
 	public static int OMNIKEY_5x21_SMARTCARD = 0x00;
-	/** Omnikey 5x21 RFID reader slot. */
+	/** Omnikey 5x21 RFID reader slot. Works only if no other reader is present.  */
 	public static int OMNIKEY_5x21_RFID = 0x01;
 	
 	/**
-	 * Returns the n-th element of the reader list. You could use the static constant
-	 * in this class to reference a special device. 
+	 * Returns the n-th element of the reader list.
 	 * 
 	 * @param _readerNr The n-th element in the reader list.
 	 * @return A {@link CardTerminal} element that encapsulates the reader otherwise null.
@@ -54,6 +52,19 @@ public abstract class ReaderFactory {
 			return readerList.get(_readerNr);
 		else
 			return null;
+	}
+	
+	/**
+	 * Returns the reader with the given name. You could use the static constant
+	 * in this class to reference a special device. 
+	 * 
+	 * @param _readerName The name of the reader
+	 * @return A {@link CardTerminal} element that encapsulates the reader otherwise null.
+	 * @throws CardException {@link CardException}
+	 */
+	public synchronized static CardTerminal getReaderObject(String _readerName) throws CardException {
+		TerminalFactory factory = TerminalFactory.getDefault();
+		return factory.terminals().getTerminal(_readerName);
 	}
 	
 	/**

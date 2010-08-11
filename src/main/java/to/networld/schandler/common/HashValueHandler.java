@@ -46,7 +46,7 @@ public class HashValueHandler {
 	 */
 	public static String computeSHA1(String _data) throws Exception {
 	    MessageDigest md = MessageDigest.getInstance("SHA-1");
-	    byte[] sha1hash = new byte[128];
+	    byte[] sha1hash = new byte[40];
 	    md.update(_data.getBytes("UTF-8"), 0, _data.length());
 	    sha1hash = md.digest();
 	    return HexHandler.getHexString(sha1hash).replace(" ", "");
@@ -61,7 +61,7 @@ public class HashValueHandler {
 	 */
 	public static String computeSHA256(String _data) throws Exception {
 	    MessageDigest md = MessageDigest.getInstance("SHA-256");
-	    byte[] sha256hash = new byte[256];
+	    byte[] sha256hash = new byte[64];
 	    md.update(_data.getBytes("UTF-8"), 0, _data.length());
 	    sha256hash = md.digest();
 	    return HexHandler.getHexString(sha256hash).replace(" ", "");
@@ -76,7 +76,7 @@ public class HashValueHandler {
 	 */
 	public static String computeSHA512(String _data) throws Exception {
 	    MessageDigest md = MessageDigest.getInstance("SHA-512");
-	    byte[] sha512hash = new byte[512];
+	    byte[] sha512hash = new byte[128];
 	    md.update(_data.getBytes("UTF-8"), 0, _data.length());
 	    sha512hash = md.digest();
 	    return HexHandler.getHexString(sha512hash).replace(" ", "");
