@@ -99,21 +99,28 @@ public abstract class HexHandler {
 	/**
 	 * @return A byte array with 16 0x00 values.
 	 */
-	public static byte[] initEmptyArray() {
+	public static byte[] initEmptyBlock() {
 		return new byte[] { (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00, 
 				(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 				(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
 				(byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00 };
 	}
 	
+	/**
+	 * Splits the given byte array into pieces of 16 byte long
+	 * arrays. 16 bytes is the block size of the tested card.
+	 * 
+	 * @param _inputArray The byte array to split
+	 * @return A Vector with byte arrays of the size of 16.
+	 */
 	public static Vector<byte[]> splitArray(byte[] _inputArray) {
 		Vector<byte[]> retVector = new Vector<byte[]>();
-		byte[] tmpArray = initEmptyArray();
+		byte[] tmpArray = initEmptyBlock();
 		int count = 0;
 		for ( int i=0; i < _inputArray.length; i++ ) {
 			if ( i % 16 == 0 && i != 0 ) {
 				retVector.add(tmpArray);
-				tmpArray = initEmptyArray();
+				tmpArray = initEmptyBlock();
 				count = 0;
 			}
 			tmpArray[count] = _inputArray[i];

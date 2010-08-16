@@ -424,7 +424,7 @@ public class BasicMifare extends BasicCard {
 			byte[] _key,
 			byte _keyNumber) throws Exception {
 		for ( int count = 0; count < this.USER_DATA_FIELDS.length; count++ ) {
-			this.writeBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber, HexHandler.initEmptyArray());
+			this.writeBlockData(_keyType, _key, (byte)0x00, USER_DATA_FIELDS[count], _keyNumber, HexHandler.initEmptyBlock());
 		}
 	}
 }

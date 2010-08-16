@@ -8,7 +8,7 @@ import javax.smartcardio.ResponseAPDU;
 
 /**
  * Interface that offers basic functionality for the handling of cards that
- * are able to communicate with the specification PC/SC 2.0.
+ * are able to communicate on the base of the PC/SC 2.0 specification.
  * 
  * @author Alex Oberhauser
  *
@@ -135,6 +135,8 @@ public interface ICard {
 	
 	/**
 	 * The card type from the ATR bytes (entry 13 and 14).
+	 * The 14. byte is actually the entry in the type 
+	 * enumeration.
 	 * 
 	 * @return The name of the card as enumeration entry.
 	 */

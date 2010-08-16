@@ -33,7 +33,8 @@ import to.networld.schandler.interfaces.ICard;
 
 /**
  * Basic class that encapsulates the functions and values that are
- * the same for all cards.
+ * the same for all cards. At least cards that implements the PC/SC
+ * specification.
  * 
  * @author Alex Oberhauser
  *
@@ -168,12 +169,8 @@ public class BasicCard implements ICard {
 	public synchronized CardType getCardType() {
 		if ( this.card == null) return null;
 		byte[] atr = this.card.getATR().getBytes();
-
-		byte[] cardtype = new byte[2];
-		cardtype[0] = atr[13];
-		cardtype[1] = atr[14];
 		
-		int typeNr = (int)cardtype[1];
+		int typeNr = (int)atr[14];
 		CardType[] values = CardType.values();
 		if ( typeNr < values.length )
 			return values[typeNr];

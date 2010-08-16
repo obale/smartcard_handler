@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import to.networld.schandler.security.AccessControl.ACL;
+
 /**
  * Persistent storage of the access rights in combination with hash values of the RFID UIDs.
  * Sqlite3 is used as database backend with the filename of the database as constructor
@@ -69,7 +71,7 @@ public class AccessHandler {
 	 * Stores or updates the access rights of a RFID card into the database.
 	 * 
 	 * @param _cardUIDHash The hash value of the RFID UID.
-	 * @param _key The key in clear text.
+	 * @param _accessRights The access rights {@link ACL}
 	 */
 	protected void storeAccessRights(String _cardUIDHash, int _accessRights) {
 		Connection connection = null;

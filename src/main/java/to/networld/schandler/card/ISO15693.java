@@ -23,6 +23,15 @@ package to.networld.schandler.card;
 import javax.smartcardio.CardTerminal;
 
 /**
+ * Implements functionality of RFID card implemented with the 
+ * ISO 15693 specification.<p/>
+ * 
+ * The {@link BasicCard#getUID()} method from the super class 
+ * is able to detect the card type and reverse the gained UID.<p/>
+ * 
+ * <b>TODO:</b> Add more specialized methods for the card handling. 
+ *              At the moment is only possible to read out the UID 
+ *              from the card.
  * 
  * @author Alex Oberhauser
  */
