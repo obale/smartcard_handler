@@ -29,7 +29,7 @@ import java.sql.Statement;
 
 /**
  * Persistent storage of the key values in combination with hash values of the RFID UIDs.
- * Sqlite3 is used as database backend with the filename of the database as constructor
+ * Sqlite3 is used as database backend with the directory where to store the database as constructor
  * parameter.
  * 
  * @author Alex Oberhauser
@@ -38,8 +38,8 @@ public class KeyHandler {
 	private final String DB_FILENAME;
 	private final String SQL_DATABASE;
 	
-	protected KeyHandler(String _dbFilename) throws ClassNotFoundException, SQLException {
-		this.DB_FILENAME = _dbFilename;
+	protected KeyHandler(String _dbDirectory) throws ClassNotFoundException, SQLException {
+		this.DB_FILENAME = _dbDirectory;
 		this.SQL_DATABASE = "jdbc:sqlite:" + DB_FILENAME;
 		
 		Class.forName("org.sqlite.JDBC");

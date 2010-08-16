@@ -40,6 +40,11 @@ import to.networld.schandler.common.HexHandler;
  */
 public class AccessControl {
 	/**
+	 * The start block from where the key is written to the card.s
+	 */
+	private static final int STARTING_KEY_BLOCK = 38;
+	
+	/**
 	 * Access Control List
 	 * TODO: Think about real use scenarios and update the enumeration.
 	 */
@@ -139,7 +144,7 @@ public class AccessControl {
 	 */
 	private String readKey(BasicMifare _card) throws Exception {
 		String key = new String();
-		for ( int count = 38; count < _card.USER_DATA_FIELDS.length; count++ ) {
+		for ( int count = STARTING_KEY_BLOCK; count < _card.USER_DATA_FIELDS.length; count++ ) {
 			ResponseAPDU response = _card.readBlockData(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x00, _card.USER_DATA_FIELDS[count], (byte)0x01);
 			byte[] byteArray = response.getData();
 			if ( byteArray[0] == (byte)0x00 ) break;
@@ -161,7 +166,7 @@ public class AccessControl {
 		if ( !this.checkKey(_card) ) return false;
 		String cardKey = this.generateKey(cardUID);
 		Vector<byte[]> blocks = HexHandler.splitArray(cardKey.getBytes());
-		for ( int count = 38; count < _card.USER_DATA_FIELDS.length; count++ ) {
+		for ( int count = STARTING_KEY_BLOCK; count < _card.USER_DATA_FIELDS.length; count++ ) {
 			if ( blocks.isEmpty() ) break;
 			_card.writeBlockData(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x00, _card.USER_DATA_FIELDS[count], (byte)0x01, blocks.firstElement());
 			blocks.remove(0);
@@ -188,7 +193,7 @@ public class AccessControl {
 			cardKey = HashValueHandler.computeSHA512(oldKey);
 		}
 		Vector<byte[]> blocks = HexHandler.splitArray(cardKey.getBytes());
-		for ( int count = 38; count < _card.USER_DATA_FIELDS.length; count++ ) {
+		for ( int count = STARTING_KEY_BLOCK; count < _card.USER_DATA_FIELDS.length; count++ ) {
 			if ( blocks.isEmpty() ) break;
 			_card.writeBlockData(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x00, _card.USER_DATA_FIELDS[count], (byte)0x01, blocks.firstElement());
 			blocks.remove(0);

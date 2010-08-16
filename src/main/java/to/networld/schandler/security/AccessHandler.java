@@ -11,7 +11,7 @@ import to.networld.schandler.security.AccessControl.ACL;
 
 /**
  * Persistent storage of the access rights in combination with hash values of the RFID UIDs.
- * Sqlite3 is used as database backend with the filename of the database as constructor
+ * Sqlite3 is used as database backend with the director where to store the database as constructor
  * parameter.
  * 
  * @author Alex Oberhauser
@@ -20,8 +20,8 @@ public class AccessHandler {
 	private final String DB_FILENAME;
 	private final String SQL_DATABASE;
 	
-	protected AccessHandler(String _dbFilename) throws ClassNotFoundException, SQLException {
-		this.DB_FILENAME = _dbFilename;
+	protected AccessHandler(String _dbDirectory) throws ClassNotFoundException, SQLException {
+		this.DB_FILENAME = _dbDirectory;
 		this.SQL_DATABASE = "jdbc:sqlite:" + DB_FILENAME;
 		
 		Class.forName("org.sqlite.JDBC");
@@ -29,8 +29,7 @@ public class AccessHandler {
 		File fd = new File(DB_FILENAME);
 		boolean fileExists = fd.exists();
 
-		Connection connection;
-		connection = DriverManager.getConnection(SQL_DATABASE);
+		Connection connection = DriverManager.getConnection(SQL_DATABASE);
 
 		Statement statement = connection.createStatement();
 		statement.setQueryTimeout(30);
