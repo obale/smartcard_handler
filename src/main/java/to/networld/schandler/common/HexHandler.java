@@ -51,7 +51,7 @@ public abstract class HexHandler {
 		String result = new String();
 		for ( int i=0; i < _byteArray.length; i++ ) {
 			result += getByteToString(_byteArray[i]);
-			result += " ";
+//			result += " ";
 		}
 		return result.trim();
 	}

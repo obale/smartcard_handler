@@ -111,7 +111,11 @@ public class BasicCard implements ICard {
 		if ( type == CardType.ICODE1
 				|| type == CardType.ICODEEPC 
 				|| type == CardType.ICODESLI
-				|| type == CardType.ICODEUID )
+				|| type == CardType.ICODEUID
+				|| type == CardType.SRF55V02P
+				|| type == CardType.SRF55V02S
+				|| type == CardType.SRF55V10P
+				|| type == CardType.SRF55V10S )
 			return HexHandler.getHexString(this.reverseArray(res.getData()));
 		else
 			return HexHandler.getHexString(res.getData());
