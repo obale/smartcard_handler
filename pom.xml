@@ -23,7 +23,7 @@
         <modelVersion>4.0.0</modelVersion>
         <groupId>to.networld.smartcard</groupId>
         <artifactId>schandler</artifactId>
-        <version>0.3</version>
+        <version>0.4-SNAPSHOT</version>
         <packaging>jar</packaging>
         <url>http://schandler.networld.to</url>
         <name>Networld SmartCard Handler</name>
