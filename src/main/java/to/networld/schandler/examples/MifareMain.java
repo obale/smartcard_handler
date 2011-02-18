@@ -36,6 +36,22 @@ public class MifareMain {
 	private static boolean DEBUG = false;
 	private static BasicMifare card = null;
 	
+	public static String getVCARD() {
+		StringBuffer vcard = new StringBuffer();
+		vcard.append("BEGIN:VCARD\n");
+		vcard.append("VERSION:2.1\n");
+		vcard.append("N:Doe;John;;Mr\n");
+		vcard.append("ADR;HOME:;;Somestreet 1;City;Region;;Country\n");
+		vcard.append("TEL;HOME:+123456789\n");
+		vcard.append("END:VCARD\n");
+		return vcard.toString();
+	}
+	
+	public static void writeVcard() throws Exception {
+		card.formatCard(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x01);
+		card.writeData(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x01, getVCARD().getBytes());
+	}
+	
 	public static void writeMyFOAFFile() throws Exception {
 		card.formatCard(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x01);
 		card.writeData(BasicMifare.KEY_A, BasicMifare.STD_KEY, (byte)0x01, "http://devnull.networld.to/foaf.rdf#me".getBytes());
@@ -67,13 +83,15 @@ public class MifareMain {
 
 		try {
 			card = new BasicMifare(_terminal, BasicMifare.PROTOCOL_T1);
-		
+			/**
+			 * writeVcard() or writeMyFOAFFile()
+			 */
 			String data = readMifare1KCardString();
 			String currentUID = card.getUID();
 			System.out.println("[*] UID                " + currentUID);
-			System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA1));
-			System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA256));
-			System.out.println("[*] UID Hash           " + card.getUIDHash(HASH_TYPE.SHA512));
+			System.out.println("[*] UID Hash (SHA-1)   " + card.getUIDHash(HASH_TYPE.SHA1));
+			System.out.println("[*] UID Hash (SHA-256) " + card.getUIDHash(HASH_TYPE.SHA256));
+			System.out.println("[*] UID Hash (SHA-512) " + card.getUIDHash(HASH_TYPE.SHA512));
 			System.out.println("[*] Card Type          " + card.getCardType());
 			System.out.println("[*] Data on the card   " + data);
 			if ( DEBUG ) {
