@@ -67,7 +67,19 @@
         </reporting>
 
         <build>
+                <extensions>
+                        <extension>
+                                <groupId>org.apache.maven.wagon</groupId>
+                                <artifactId>wagon-ssh</artifactId>
+                                <version>2.0</version>
+                        </extension>
+                </extensions>
                 <plugins>
+                        <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-release-plugin</artifactId>
+                                <version>2.2.1</version>
+                        </plugin>
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-compiler-plugin</artifactId>
@@ -109,6 +121,7 @@
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-source-plugin</artifactId>
+                                <version>2.1.2</version>
                                 <executions>
                                         <execution>
                                                 <id>attach-sources</id>
@@ -122,6 +135,7 @@
                         <plugin>
                                 <groupId>org.apache.maven.plugins</groupId>
                                 <artifactId>maven-jar-plugin</artifactId>
+                                <version>2.3.2</version>
                                 <configuration>
                                         <archive>
                                                 <manifest>
@@ -130,7 +144,7 @@
                                                 </manifest>
                                                 <manifestEntries>
                                                         <mode>development</mode>
-                                                        <url>${pom.url}</url>
+                                                        <url>${project.url}</url>
                                                 </manifestEntries>
                                         </archive>
                                 </configuration>
